@@ -1,0 +1,12 @@
+node_modules/
+.idea/
+.DS_Store
+*npm-debug.log
+log/
+*.swp
+*.swo
+coverage/
+plato/
+.vagrant/
+/Vagrantfile
+tmp/

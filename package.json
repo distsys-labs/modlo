@@ -1,0 +1,33 @@
+{
+  "name": "modlo",
+  "version": "1.0.0",
+  "description": "A dynamic module loader built on fount",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arobson/modlo.git"
+  },
+  "keywords": [
+    "module",
+    "fount",
+    "loader"
+  ],
+  "author": "Alex Robson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/arobson/modlo/issues"
+  },
+  "homepage": "https://github.com/arobson/modlo#readme",
+  "dependencies": {
+    "fount": "~0.2.0-2",
+    "globulesce": "^0.1.5",
+    "when": "^3.7.7"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0"
+  }
+}
