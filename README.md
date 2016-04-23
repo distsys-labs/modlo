@@ -9,7 +9,7 @@ A dynamic module loader that uses fount for dynamic load and initialization of m
 > * rapid increase in knuckle hair growth
 
 ## Purpose
-Loads NPM modules and modules from a project dynamically based on glob patterns and registers them with fount. Instantiates modules that return a function and satisfies argument list from a fount container. Functions returned can result in a promise or value. Callback style functions have limited support.
+Loads NPM modules and modules dynamically based on glob patterns and registers them with fount. Instantiates modules that return a function and satisfies argument list from a fount container. Functions returned can result in a promise or value.
 
 ### Naming
 Make sure to consider how modlo names. It's going to load a bunch of modules for you and, while that's nice, if you don't understand how it goes about naming them in fount, you're going to have a bad time. Here's how modlo attempts to determine the name of each module's instance (or factory):
@@ -75,71 +75,85 @@ I have a few libs that exhibit this kind of behavior in order to make it easy to
 
 I also hate boilerplate code. Any time I think there's a chance to reduce the tons of wire-up code required so a project can just focus on the interesting stuff, I chase that opportunity. YMMV :)
 
-## Use
+## API
 
-### Initializing
-__Simple__
-```javascript
+### `( [defaults] )`
+Requiring modlo returns an initializer that allows you to provide defaults that will be used when calling load later. The primary use for this is providing an external fount instance so it only needs to be done once:
 
-// will load all modules from the plugins directory
-// that end in 'plugin.js'
-var modlo = require( "modlo" );
-var loader = modlo( {
-	patterns: "./plugins/*.plugin.js"	
-} );
+```js
+// no defaults - modlo will use an internal fount instance
+var loader = modlo();
 
-loader.load()
-	.then( function( loaded ) {
-		// returns the list of keys registered in fount as a result
-	} );
-
-// use the fount property of the loader to resolve
-loader.fount.resolve( "somePlugin" )
-	.then( function( plugin ) {
-		
-	} );
-
-__Custom Fount__
-```javascript
-var modlo = require( "modlo" );
+// providing your fount instance
 var fount = require( "fount" );
-
-var loader = modlo( {
-	patterns: "./plugins/*.plugin.js",
-	fount: fount
-} );
-
-loader.load()
-	.then( function( loaded ) {
-		// returns the list of keys registered in fount as a result
-	} );
-
-// use your fount instance directly
-fount.resolve( "somePlugin" )
-	.then( function( plugin ) {
-		
-	} );
+var loader = modlo( { fount: fount } );
 ```
 
-__Multiple Patterns & NPM Modules__
-```javascript
-var modlo = require( "modlo" );
-var fount = require( "fount" );
+### `load( config )`
+Load takes a config hash and returns a promise that will resolve to a list of registered keys and the fount instance they were registered in.
 
-var loader = modlo( {
-	patterns: [ "./plugins/*.plugin.js", "./resources/**/*.js" ],
-	modules: [ "npmLib1", "npmLib2" ],
-	fount: fount
+__config hash format__
+```js
+{
+	patterns: []|"", // one or more file globs to load
+	modules: []|"". // one or more NPM modules to load
+	fount: undefined|instance // optional way to provide what fount instance gets used
+}
+```
+
+__result hash format__
+```js
+	loaded: [], // the list of keys registered with fount
+	fount: instance // the fount instance used for registration
+```
+
+#### example - no defaults during init
+```js
+// no defaults - modlo will use an internal fount instance
+var loader = modlo();
+
+// load all `.plugin.js` files from the plugin folder
+loader.load( {
+	patterns: "./plugin/*.plugin.js"
+} ).then( function( result ) {
+	// this is why its unlikely you'd want to use
+	// modlo's fount instance, you have to capture and
+	// pass it on then keep passing it around
+	doSomethingWithFount( result.fount );
+} );
+```
+
+#### example - providing your fount instance during init
+```js
+
+var fount = require( "fount" );
+var loader = modlo( { fount: fount } );
+
+// load all `.plugin.js` files from the plugin folder
+// load all `resource.js` files from a folder structure under `./resources`
+loader.load( {
+	patterns: [ "./plugin/*.plugin.js", "./resources/**/resource.js" ]
+} ).then( function( result ) {
+	// now it's less critical that you capture anything at this stage,
+	// it's really more just about waiting for the promise to resolve
+	// before completing your service's initialization
 } );
 
-loader.load()
-	.then( function( loaded ) {
-		// returns the list of keys registered in fount as a result
-	} );
+```
 
-// use your fount instance directly
-fount.resolve( "somePlugin" )
-	.then( function( plugin ) {
-		
-	} );
+#### example - providing a fount instance at load time
+``` js
+var fount = require( "fount" );
+var loader = modlo();
+
+// you can wait to provide your fount instance when calling load
+// load all `.plugin.js` files from the plugin folder
+// load all `resource.js` files from a folder structure under `./resources`
+// load and register `when` and `postal` from the NPM modules folder
+loader.load( {
+	fount: fount,
+	patterns: [ "./plugin/*.plugin.js", "./resources/**/resource.js" ],
+	modules: [ "when", "postal" ]
+} ).then( function( result ) {
+} );
 ```

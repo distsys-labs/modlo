@@ -29,7 +29,6 @@ function getFullList( patterns, modules ) {
 			return list;
 		} );
 }
-
 // get single list of all modules to load and add metadata about each
 function getDependencyList( fount, patterns, modules ) {
 	return getFullList( patterns, modules )
@@ -63,7 +62,8 @@ function getModuleInfo( module ) {
 	}
 }
 
-function load( fount, config ) {
+function load( config ) {
+	var fount = config.fount || require( "fount" );
 	var patterns = normalizeToArray( config.patterns );
 	var modules = normalizeToArray( config.modules );
 	return getDependencyList( fount, patterns, modules )
@@ -71,9 +71,13 @@ function load( fount, config ) {
 				list = _.filter( list );
 				return registerAll( fount, list, 0 )
 					.then( function() {
-						return _.map( list, function( module ) {
+						var keys = _.map( list, function( module ) {
 							return module.name.split( "_" ).join( "." );
 						} );
+						return {
+							loaded: keys,
+							fount: fount
+						};
 					} );
 			} );
 }
@@ -157,16 +161,14 @@ function tryRegistration( fount, moduleInfo ) {
 	}
 }
 
-function initialize( config ) {
-	var state = {};
-	if( config && config.fount ) {
-		state.fount = config.fount;
-	} else {
-		state.fount = require( "fount" );
-	}
-	return Object.assign( state, {
-		load: load.bind( null, state.fount, config )
-	} );
+function initialize( defaults ) {
+	function loadWithDefaults( config ) {
+		var effective = Object.assign( defaults || {}, config );
+		return load( effective );
+	};
+	return {
+		load: loadWithDefaults
+	};
 };
 
 module.exports = initialize;

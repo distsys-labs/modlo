@@ -9,18 +9,18 @@ describe( "Loader", function() {
 		var result, loader;
 		before( function() {
 			loader = modlo( {
-				fount: fount, 
-				patterns: [ "./spec/plugins/**/*.js", "./spec/things/*.js" ],
-				modules: [ "when" ]
+				fount: fount
 			} );
-			return loader.load()
-				.then( function( x ) {
-					result = x;
-				} );
+			return loader.load( {
+				patterns: [ "./spec/plugins/**/*.js", "./spec/things/*.js" ],
+				modules: "when"
+			} ).then( function( x ) {
+				result = x;
+			} );
 		} );
 
 		it( "should result in list of loaded items", function() {
-			result.should.eql( [ 
+			result.loaded.should.eql( [ 
 				"pluginOne.config", 
 				"pluginTwo.config", 
 				"helloWorld",
@@ -56,31 +56,31 @@ describe( "Loader", function() {
 		var result, loader;
 		before( function() {
 			loader = modlo( {
-				patterns: [ "./spec/plugins/**/*.js", "./spec/things/*.js" ],
 				modules: [ "when" ]
 			} );
-			return loader.load()
-				.then( function( x ) {
-					result = x;
-				} );
+			return loader.load( {
+				patterns: [ "./spec/plugins/**/*.js", "./spec/things/*.js" ]
+			} ).then( function( x ) {
+				result = x;
+			} );
 		} );
 
 		it( "should result in list of loaded items", function() {
-			result.should.eql( [ 
-				"pluginOne.config", 
-				"pluginTwo.config", 
-				"helloWorld",
-				"pluginOne",
-				"three", 
-				"two", 
-				"pluginTwo", 
-				"thingOne",
-				"when" 
-			] );
+			result.loaded.should.eql( [
+					"pluginOne.config", 
+					"pluginTwo.config", 
+					"helloWorld",
+					"pluginOne",
+					"three", 
+					"two", 
+					"pluginTwo", 
+					"thingOne",
+					"when"
+				] );
 		} );
 
 		it( "should resolve requests for plugin with expected promise", function() {
-			return loader.fount.resolve( "pluginOne" )
+			return result.fount.resolve( "pluginOne" )
 				.should.eventually.eql( {
 						_path: path.resolve( "./spec/plugins/one.js" ),
 						title: "plugin one",
@@ -94,7 +94,7 @@ describe( "Loader", function() {
 		} );
 
 		after( function() {
-			loader.fount.purgeAll();
+			result.fount.purgeAll();
 		} );
 	} );
 
@@ -103,24 +103,23 @@ describe( "Loader", function() {
 	describe( "when all module dependencies resolve", function() {
 		var result, loader;
 		before( function() {
-			loader = modlo( {
+			loader = modlo();
+			return loader.load( {
 				fount: fount, 
 				patterns: [ "./spec/simple/*.js" ]
+			} ).then( function( x ) {
+				result = x;
 			} );
-			return loader.load()
-				.then( function( x ) {
-					result = x;
-				} );
 		} );
 
 		it( "should result in list of loaded items", function() {
-			result.should.eql( [
+			result.loaded.should.eql( [
 				"simple"
 			] );
 		} );
 
 		after( function() {
-			loader.fount.purgeAll();
+			fount.purgeAll();
 		} );
 	} );
 } );
