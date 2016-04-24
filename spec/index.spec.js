@@ -52,6 +52,53 @@ describe( "Loader", function() {
 		} );
 	} );
 
+	describe( "With fount container and valid modules", function() {
+		var result, loader;
+		before( function() {
+			loader = modlo( {
+				fount: fount( "test" )
+			} );
+			return loader.load( {
+				patterns: [ "./spec/plugins/**/*.js", "./spec/things/*.js" ],
+				modules: "when"
+			} ).then( function( x ) {
+				result = x;
+			} );
+		} );
+
+		it( "should result in list of loaded items", function() {
+			result.loaded.should.eql( [ 
+				"pluginOne.config", 
+				"pluginTwo.config", 
+				"helloWorld",
+				"pluginOne",
+				"three", 
+				"two", 
+				"pluginTwo", 
+				"thingOne",
+				"when" 
+			] );
+		} );
+
+		it( "should resolve requests for plugin with expected promise", function() {
+			return fount( "test" ).resolve( "test_pluginOne" )
+				.should.eventually.eql( {
+						_path: path.resolve( "./spec/plugins/one.js" ),
+						title: "plugin one",
+						list: [ "two", "three" ],
+						value: {
+							_path: path.resolve( "./spec/things/one.js" ),
+							name: "thingOne", 
+							description: "too cool for school"
+						}
+				} );
+		} );
+
+		after( function() {
+			fount.purgeAll();
+		} );
+	} );
+
 	describe( "with internal fount instance", function() {
 		var result, loader;
 		before( function() {

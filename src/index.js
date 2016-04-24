@@ -21,7 +21,7 @@ function getFullList( patterns, modules ) {
 	return getModuleList( patterns )
 		.then( function( list ) {
 			_.each( modules, function( moduleName ) {
-				list.push( {
+				list.unshift( {
 					path: require.resolve( moduleName ),
 					name: moduleName 
 				} );
@@ -31,7 +31,10 @@ function getFullList( patterns, modules ) {
 }
 // get single list of all modules to load and add metadata about each
 function getDependencyList( fount, patterns, modules ) {
-	return getFullList( patterns, modules )
+	_.each( modules, function( name ) {
+		fount.registerModule( name );
+	} );
+	return getModuleList( patterns, modules )
 		.then( function( moduleList ) {
 			return _.map( moduleList, function( info ) {
 				return getModuleInfo( info );
@@ -75,7 +78,7 @@ function load( config ) {
 							return module.name.split( "_" ).join( "." );
 						} );
 						return {
-							loaded: keys,
+							loaded: keys.concat( modules ),
 							fount: fount
 						};
 					} );
@@ -140,8 +143,11 @@ function tryRegistration( fount, moduleInfo ) {
 			var dependencies = argList;
 			argList = [];
 			_.each( dependencies, function( arg ) {
-				if( fount( moduleInfo.name ).canResolve( arg ) ) {
-					argList.push( [ moduleInfo.name, arg ].join( "_" ) )
+				var qualifiedName = [ moduleInfo.name, arg ].join( "_" );
+				if( _.isFunction( fount ) && fount( moduleInfo.name ).canResolve( arg ) ) {
+					argList.push( qualifiedName )
+				} else if( fount.canResolve( qualifiedName ) ) {
+					argList.push( qualifiedName )
 				} else if( fount.canResolve( arg ) ) {
 					argList.push( arg );
 				}
