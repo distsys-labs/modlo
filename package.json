@@ -1,6 +1,6 @@
 {
   "name": "modlo",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A dynamic module loader built on fount",
   "main": "src/index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/arobson/modlo#readme",
   "dependencies": {
-    "fount": "~0.2.0-3",
+    "fount": "~1.0.0-1",
     "globulesce": "^0.1.5",
     "when": "^3.7.7"
   },

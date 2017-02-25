@@ -16,6 +16,19 @@ function getModuleList( patterns ) {
 		} );
 }
 
+// get single list of all modules to load and add metadata about each
+function getDependencyList( fount, patterns, modules ) {
+	_.each( modules, function( name ) {
+		fount.registerModule( name )
+	} );
+	return getModuleList( patterns, modules )
+		.then( function( moduleList ) {
+			return _.map( moduleList, function( info ) {
+				return getModuleInfo( info );
+			} );
+		} );
+}
+
 // loads internal resources, resources from config path and node module resources
 function getFullList( patterns, modules ) {
 	return getModuleList( patterns )
@@ -27,18 +40,6 @@ function getFullList( patterns, modules ) {
 				} );
 			} );
 			return list;
-		} );
-}
-// get single list of all modules to load and add metadata about each
-function getDependencyList( fount, patterns, modules ) {
-	_.each( modules, function( name ) {
-		fount.registerModule( name );
-	} );
-	return getModuleList( patterns, modules )
-		.then( function( moduleList ) {
-			return _.map( moduleList, function( info ) {
-				return getModuleInfo( info );
-			} );
 		} );
 }
 
@@ -65,24 +66,45 @@ function getModuleInfo( module ) {
 	}
 }
 
+// create name to register the module by
+function getRegistrationName( namespace, module ) {
+	if( namespace ) {
+		return [ namespace ].concat( module.name.split( "_" ) ).join( "." );
+	} else {
+		return module.name.split( "_" ).join( "." );
+	}
+}
+
+// create qualified name for argument
+function getQualifiedName( namespace, module, arg ) {
+	var registrationName = getRegistrationName( namespace, module );
+	return [ registrationName, arg ].join( "." );
+}
+
+// create qualified name for argument
+function getNamespaceName( namespace, arg ) {
+	return [ namespace, arg ].join( "." );
+}
+
+
 function load( config ) {
 	var fount = config.fount || require( "fount" );
 	var patterns = normalizeToArray( config.patterns );
 	var modules = normalizeToArray( config.modules );
 	return getDependencyList( fount, patterns, modules )
-			.then( function( list ) {
-				list = _.filter( list );
-				return registerAll( fount, list, 0 )
-					.then( function() {
-						var keys = _.map( list, function( module ) {
-							return module.name.split( "_" ).join( "." );
-						} );
-						return {
-							loaded: keys.concat( modules ),
-							fount: fount
-						};
+		.then( function( list ) {
+			list = _.filter( list );
+			return registerAll( fount, config.namespace, list, 0 )
+				.then( function() {
+					var keys = _.map( list, function( module ) {
+						return getRegistrationName( config.namespace, module );
 					} );
-			} );
+					return {
+						loaded: keys.concat( modules ),
+						fount: fount
+					};
+				} );
+		} );
 }
 
 function normalizeToArray( value ) {
@@ -93,21 +115,22 @@ function normalizeToArray( value ) {
 // to ensure all dependencies are available before attempting to
 // determine whether a module's resulting function should be registered
 // as a factory or a static result
-function registerAll( fount, modules, failures ) {
+function registerAll( fount, namespace, modules, failures ) {
 	if( failures < 2 || modules.length === 0 ) {
-		return registerModules( fount, modules )
+		return registerModules( fount, namespace, modules )
 			.then( function( remaining ) {
 				if( remaining.length ) {
 					if( remaining.length === modules.length ) {
 						failures ++;
 					}
-					return registerAll( fount, remaining, failures );
+					return registerAll( fount, namespace, remaining, failures );
 				}
 				return when([]);
 			} );
 	} else {
 		_.each( modules, function( m ) {
-			fount.register( m.name, m.value );
+			var name = getRegistrationName( namespace, m );
+			fount.register( name, m.value );
 		} );
 		return when([]);
 	}
@@ -116,10 +139,10 @@ function registerAll( fount, modules, failures ) {
 // attempt to register modules based on whether their dependencies
 // can be resolved by fount.
 // resolves to a list of modules that have unresolved dependencies
-function registerModules( fount, modules ) {
+function registerModules( fount, namespace, modules ) {
 	var remaining = [];
 	return when.all( _.map( modules, function( m ) {
-		return tryRegistration( fount, m )
+		return tryRegistration( fount, namespace, m )
 			.then( null, function() {
 				remaining.push( m );
 			} );
@@ -130,10 +153,11 @@ function registerModules( fount, modules ) {
 
 // attempt to register a module by looking at its dependnecy list
 // rejects if the module has dependencies that can't be resolved by fount yet
-function tryRegistration( fount, moduleInfo ) {
+function tryRegistration( fount, namespace, moduleInfo ) {
 	function onResult( result ) {
 		result._path = moduleInfo.path;
-		fount.register( moduleInfo.name, result );
+		var name = getRegistrationName( namespace, moduleInfo );
+		fount.register( name, result );
 		return moduleInfo.name;
 	}
 
@@ -143,11 +167,14 @@ function tryRegistration( fount, moduleInfo ) {
 			var dependencies = argList;
 			argList = [];
 			_.each( dependencies, function( arg ) {
-				var qualifiedName = [ moduleInfo.name, arg ].join( "_" );
+				var qualifiedName = getQualifiedName( namespace, moduleInfo, arg );
+				var namespaceName = getNamespaceName( namespace, arg );
 				if( _.isFunction( fount ) && fount( moduleInfo.name ).canResolve( arg ) ) {
-					argList.push( qualifiedName )
+					argList.push( qualifiedName );
 				} else if( fount.canResolve( qualifiedName ) ) {
-					argList.push( qualifiedName )
+					argList.push( qualifiedName );
+				} else if( fount.canResolve( namespaceName ) ) {
+					argList.push( namespaceName );
 				} else if( fount.canResolve( arg ) ) {
 					argList.push( arg );
 				}

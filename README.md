@@ -95,6 +95,7 @@ Load takes a config hash and returns a promise that will resolve to a list of re
 __config hash format__
 ```js
 {
+	namespace: "", // a namespace prefix to prefix all loaded modules with
 	patterns: []|"", // one or more file globs to load
 	modules: []|"". // one or more NPM modules to load
 	fount: undefined|instance // optional way to provide what fount instance gets used

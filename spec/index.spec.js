@@ -81,7 +81,7 @@ describe( "Loader", function() {
 		} );
 
 		it( "should resolve requests for plugin with expected promise", function() {
-			return fount( "test" ).resolve( "test_pluginOne" )
+			return fount.resolve( "test_pluginOne" )
 				.should.eventually.eql( {
 						_path: path.resolve( "./spec/plugins/one.js" ),
 						title: "plugin one",
@@ -99,7 +99,7 @@ describe( "Loader", function() {
 		} );
 	} );
 
-	describe( "with internal fount instance", function() {
+	describe( "With internal fount instance", function() {
 		var result, loader;
 		before( function() {
 			loader = modlo( {
@@ -142,6 +142,54 @@ describe( "Loader", function() {
 
 		after( function() {
 			result.fount.purgeAll();
+		} );
+	} );
+
+	describe( "With custom namespace", function() {
+		var result, loader;
+		before( function() {
+			loader = modlo( {
+				fount: fount
+			} );
+			return loader.load( {
+				patterns: [ "./spec/plugins/**/*.js", "./spec/things/*.js" ],
+				namespace: "myTest",
+				modules: "when"
+			} ).then( function( x ) {
+				result = x;
+			} );
+		} );
+
+		it( "should result in list of loaded items", function() {
+			result.loaded.should.eql( [
+					"myTest.pluginOne.config", 
+					"myTest.pluginTwo.config", 
+					"myTest.helloWorld",
+					"myTest.pluginOne",
+					"myTest.three", 
+					"myTest.two", 
+					"myTest.pluginTwo", 
+					"myTest.thingOne",
+					"when"
+				] );
+		} );
+
+		it( "should resolve requests for plugin with expected promise", function() {
+			return result.fount.resolve( "myTest.pluginOne" )
+				.should.eventually.eql( {
+						_path: path.resolve( "./spec/plugins/one.js" ),
+						title: "plugin one",
+						list: [ "two", "three" ],
+						value: {
+							_path: path.resolve( "./spec/things/one.js" ),
+							name: "thingOne",
+							description: "too cool for school"
+						}
+				} );
+		} );
+
+		after( function() {
+			fount.purgeAll();
 		} );
 	} );
 
