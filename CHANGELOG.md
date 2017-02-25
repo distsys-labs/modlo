@@ -1,6 +1,6 @@
 ## 1.1.x
 
-### 1.1.2
+### 1.1.3
  * Upgrade fount dependnecy to 1.0.0
  * Allow custom namespace prefix when loading
 
