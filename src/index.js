@@ -1,13 +1,12 @@
 var _ = require( 'lodash' );
 var path = require( 'path' );
-var when = require( 'when' );
 var utility = require( "./utility" );
 var glob = require( "globulesce" );
 var getArguments = utility.getArguments;
 
 // returns a list of files from a given parent directory
 function getModuleList( patterns ) {
-	return when.all( glob( "./", patterns, [ ".git", "node_modules" ] ) )
+	return glob( "./", patterns, [ ".git", "node_modules" ] )
 		.then( function( collections ) {
 			var list = _.filter( _.flatten( collections ) );
 			return _.map( list, function( modulePath ) {
@@ -125,14 +124,14 @@ function registerAll( fount, namespace, modules, failures ) {
 					}
 					return registerAll( fount, namespace, remaining, failures );
 				}
-				return when([]);
+				return Promise.resolve([]);
 			} );
 	} else {
 		_.each( modules, function( m ) {
 			var name = getRegistrationName( namespace, m );
 			fount.register( name, m.value );
 		} );
-		return when([]);
+		return Promise.resolve([]);
 	}
 }
 
@@ -141,7 +140,7 @@ function registerAll( fount, namespace, modules, failures ) {
 // resolves to a list of modules that have unresolved dependencies
 function registerModules( fount, namespace, modules ) {
 	var remaining = [];
-	return when.all( _.map( modules, function( m ) {
+	return Promise.all( _.map( modules, function( m ) {
 		return tryRegistration( fount, namespace, m )
 			.then( null, function() {
 				remaining.push( m );
@@ -157,6 +156,7 @@ function tryRegistration( fount, namespace, moduleInfo ) {
 	function onResult( result ) {
 		result._path = moduleInfo.path;
 		var name = getRegistrationName( namespace, moduleInfo );
+		//console.log( "registering", name, result );
 		fount.register( name, result );
 		return moduleInfo.name;
 	}
@@ -184,13 +184,13 @@ function tryRegistration( fount, namespace, moduleInfo ) {
 				return fount.inject( argList, moduleInfo.value )
 					.then( onResult );
 			} else {
-				return when.reject( moduleInfo );
+				return Promise.reject( moduleInfo );
 			}
 		} else {
-			return when( onResult( moduleInfo.value() ) );
+			return Promise.resolve( onResult( moduleInfo.value() ) );
 		}
 	} else {
-		return when( onResult( moduleInfo.value ) );
+		return Promise.resolve( onResult( moduleInfo.value ) );
 	}
 }
 

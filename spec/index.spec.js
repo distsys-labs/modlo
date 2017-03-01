@@ -174,6 +174,11 @@ describe( "Loader", function() {
 				] );
 		} );
 
+		it( "should", () => {
+		  result.fount.containers().sort()
+		  	.should.eql( [ "default", "myTest", "myTest.pluginOne", "myTest.pluginTwo" ] );
+		} );
+
 		it( "should resolve requests for plugin with expected promise", function() {
 			return result.fount.resolve( "myTest.pluginOne" )
 				.should.eventually.eql( {
