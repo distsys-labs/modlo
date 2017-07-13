@@ -160,7 +160,7 @@ loader.load({
 })
 ```
 
-[travis-url]: https://travis-ci.org/arobson/modlo
-[travis-image]: https://travis-ci.org/arobson/modlo.svg?branch=master
-[coveralls-url]: https://coveralls.io/github/arobson/modlo?branch=master
-[coveralls-image]: https://coveralls.io/repos/github/arobson/modlo/badge.svg?branch=master
+[travis-url]: https://travis-ci.org/deftly/modlo
+[travis-image]: https://travis-ci.org/deftly/modlo.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/deftly/modlo?branch=master
+[coveralls-image]: https://coveralls.io/repos/github/deftly/modlo/badge.svg?branch=master
