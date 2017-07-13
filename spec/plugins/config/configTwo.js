@@ -1,5 +1,6 @@
-module.exports = function pluginTwo_config() {
-	return {
-		title: "plugin two"
-	};
-};
+/* eslint-disable */
+module.exports = function pluginTwo_config () {
+  return {
+    title: 'plugin two'
+  }
+}

@@ -1,5 +1,5 @@
-module.exports = function three() {
-	return {
-		name: "three"
-	}
-};
+module.exports = function three () {
+  return {
+    name: 'three'
+  }
+}

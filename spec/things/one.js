@@ -1,4 +1,4 @@
 module.exports = {
-	name: "thingOne",
-	description: "too cool for school"
-};
+  name: 'thingOne',
+  description: 'too cool for school'
+}

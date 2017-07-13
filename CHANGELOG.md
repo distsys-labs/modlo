@@ -1,3 +1,10 @@
+## 1.2.0
+
+ * Fount and modlo to 1.0.0
+ * introduce travis and coveralls for build
+ * use standard commits
+ * adopt standard code style
+
 ## 1.1.x
 
 ### 1.1.4

@@ -1,3 +1,3 @@
-module.exports = function simple() {
-	return "simple";	
-};
+module.exports = function simple () {
+  return 'simple'
+}
