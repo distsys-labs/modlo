@@ -1,8 +1,7 @@
-const _ = require('lodash')
+const _ = require('fauxdash')
 const path = require('path')
-const utility = require('./utility')
 const glob = require('globulesce')
-const getArguments = utility.getArguments
+const getArguments = _.getArguments
 
 // returns a list of files from a given parent directory
 function getModuleList (patterns) {

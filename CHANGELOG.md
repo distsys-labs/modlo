@@ -1,6 +1,8 @@
 ## 1.2.0
 
- * Fount and modlo to 1.0.0
+ * Fount and globulesce to 1.x
+ * drop when and lodash
+ * move common utility to fauxdash
  * introduce travis and coveralls for build
  * use standard commits
  * adopt standard code style
