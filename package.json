@@ -26,8 +26,8 @@
   },
   "homepage": "https://github.com/arobson/modlo#readme",
   "dependencies": {
-    "fauxdash": "1.0.0",
-    "fount": "1.1.0",
+    "fauxdash": "1.1.x",
+    "fount": "1.1.x",
     "globulesce": "1.0.0"
   },
   "devDependencies": {
