@@ -1,3 +1,22 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/arobson/modlo/compare/v1.1.4...v1.3.0) (2017-07-16)
+
+
+### Bug Fixes
+
+* bump version of fauxdash to fix argument parsing for default values ([50c5935](https://github.com/arobson/modlo/commit/50c5935))
+
+
+### Features
+
+* drop when and lodash dependencies, introduce fauxdash, bump fount and globulesce depdendencies, improve build and test process ([87cf076](https://github.com/arobson/modlo/commit/87cf076))
+
+
+
 ## 1.2.0
 
  * Fount and globulesce to 1.x
