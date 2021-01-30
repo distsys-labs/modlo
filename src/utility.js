@@ -6,7 +6,7 @@ function invokeFount (call, args) {
   const state = args.shift()
   const configuration = args.shift()
   const container = getContainer(state, configuration)
-  return container[ call ].apply(container, args)
+  return container[call].apply(container, args)
 }
 
 function inject (...parameters) {

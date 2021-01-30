@@ -1,5 +1,5 @@
-module.exports = function pluginTwo (when, config) {
-  return when({
+module.exports = function pluginTwo (config) {
+  return Promise.resolve({
     title: config.title
   })
 }

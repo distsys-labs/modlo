@@ -1,7 +1,7 @@
-module.exports = function pluginOne (when, thingOne, two, three, config) {
-  return when({
+module.exports = function pluginOne (thingOne, two, three, config) {
+  return Promise.resolve({
     title: config.title,
     value: thingOne,
-    list: [ two.name, three.name ]
+    list: [two.name, three.name]
   })
 }

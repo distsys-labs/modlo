@@ -5,7 +5,7 @@ const getArguments = _.getArguments
 
 // returns a list of files from a given parent directory
 function getModuleList (patterns) {
-  return glob('./', patterns, [ '.git', 'node_modules' ])
+  return glob('./', patterns, ['.git', 'node_modules'])
     .then(collections => {
       const list = _.filter(_.flatten(collections))
       return list.map(modulePath => {
@@ -31,7 +31,7 @@ function getDependencyList (fount, patterns, modules) {
 function getModuleInfo (module) {
   try {
     const key = path.resolve(module.path)
-    delete require.cache[ key ]
+    delete require.cache[key]
     const moduleResult = require(module.path)
     const fileName = path.basename(module.path)
     const moduleName = module.name || moduleResult.name || fileName.replace(path.extname(fileName), '')
@@ -54,7 +54,7 @@ function getModuleInfo (module) {
 // create name to register the module by
 function getRegistrationName (namespace, module) {
   if (namespace) {
-    return [ namespace ].concat(module.name.split('_')).join('.')
+    return [namespace].concat(module.name.split('_')).join('.')
   } else {
     return module.name.split('_').join('.')
   }
@@ -63,12 +63,12 @@ function getRegistrationName (namespace, module) {
 // create qualified name for argument
 function getQualifiedName (namespace, module, arg) {
   const registrationName = getRegistrationName(namespace, module)
-  return [ registrationName, arg ].join('.')
+  return [registrationName, arg].join('.')
 }
 
 // create qualified name for argument
 function getNamespaceName (namespace, arg) {
-  return [ namespace, arg ].join('.')
+  return [namespace, arg].join('.')
 }
 
 function load (config) {
@@ -92,7 +92,7 @@ function load (config) {
 }
 
 function normalizeToArray (value) {
-  return _.isString(value) ? [ value ] : (value || [])
+  return _.isString(value) ? [value] : (value || [])
 }
 
 // attempt to register all modules with fount using multiple passes
@@ -113,7 +113,7 @@ function registerAll (fount, namespace, modules, failures) {
       })
   } else {
     modules.forEach(module => {
-      var name = getRegistrationName(namespace, module)
+      const name = getRegistrationName(namespace, module)
       fount.register(name, module.value)
     })
     return Promise.resolve([])
@@ -124,12 +124,12 @@ function registerAll (fount, namespace, modules, failures) {
 // can be resolved by fount.
 // resolves to a list of modules that have unresolved dependencies
 function registerModules (fount, namespace, modules) {
-  var remaining = []
+  const remaining = []
   return Promise.all(modules.map(module => {
     return tryRegistration(fount, namespace, module)
       .then(null, () => remaining.push(module))
   }))
-  .then(() => remaining)
+    .then(() => remaining)
 }
 
 // attempt to register a module by looking at its dependnecy list

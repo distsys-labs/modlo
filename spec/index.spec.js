@@ -12,8 +12,7 @@ describe('Loader', function () {
         fount: fount
       })
       return loader.load({
-        patterns: [ './spec/plugins/**/*.js', './spec/things/*.js' ],
-        modules: 'when'
+        patterns: ['./spec/plugins/**/*.js', './spec/things/*.js']
       }).then(x => { result = x })
     })
 
@@ -26,8 +25,7 @@ describe('Loader', function () {
         'three',
         'two',
         'pluginTwo',
-        'thingOne',
-        'when'
+        'thingOne'
       ])
     })
 
@@ -36,7 +34,7 @@ describe('Loader', function () {
         .should.eventually.eql({
           _path: path.resolve('./spec/plugins/one.js'),
           title: 'plugin one',
-          list: [ 'two', 'three' ],
+          list: ['two', 'three'],
           value: {
             _path: path.resolve('./spec/things/one.js'),
             name: 'thingOne',
@@ -57,8 +55,7 @@ describe('Loader', function () {
         fount: fount('test')
       })
       return loader.load({
-        patterns: [ './spec/plugins/**/*.js', './spec/things/*.js' ],
-        modules: 'when'
+        patterns: ['./spec/plugins/**/*.js', './spec/things/*.js']
       }).then(x => { result = x })
     })
 
@@ -71,8 +68,7 @@ describe('Loader', function () {
         'three',
         'two',
         'pluginTwo',
-        'thingOne',
-        'when'
+        'thingOne'
       ])
     })
 
@@ -81,7 +77,7 @@ describe('Loader', function () {
         .should.eventually.eql({
           _path: path.resolve('./spec/plugins/one.js'),
           title: 'plugin one',
-          list: [ 'two', 'three' ],
+          list: ['two', 'three'],
           value: {
             _path: path.resolve('./spec/things/one.js'),
             name: 'thingOne',
@@ -99,10 +95,10 @@ describe('Loader', function () {
     let result
     before(function () {
       const loader = modlo({
-        modules: [ 'when' ]
+        modules: []
       })
       return loader.load({
-        patterns: [ './spec/plugins/**/*.js', './spec/things/*.js' ]
+        patterns: ['./spec/plugins/**/*.js', './spec/things/*.js']
       }).then(x => { result = x })
     })
 
@@ -115,8 +111,7 @@ describe('Loader', function () {
         'three',
         'two',
         'pluginTwo',
-        'thingOne',
-        'when'
+        'thingOne'
       ])
     })
 
@@ -125,7 +120,7 @@ describe('Loader', function () {
         .should.eventually.eql({
           _path: path.resolve('./spec/plugins/one.js'),
           title: 'plugin one',
-          list: [ 'two', 'three' ],
+          list: ['two', 'three'],
           value: {
             _path: path.resolve('./spec/things/one.js'),
             name: 'thingOne',
@@ -146,9 +141,8 @@ describe('Loader', function () {
         fount: fount
       })
       return loader.load({
-        patterns: [ './spec/plugins/**/*.js', './spec/things/*.js' ],
-        namespace: 'myTest',
-        modules: 'when'
+        patterns: ['./spec/plugins/**/*.js', './spec/things/*.js'],
+        namespace: 'myTest'
       }).then(x => { result = x })
     })
 
@@ -161,14 +155,13 @@ describe('Loader', function () {
         'myTest.three',
         'myTest.two',
         'myTest.pluginTwo',
-        'myTest.thingOne',
-        'when'
+        'myTest.thingOne'
       ])
     })
 
     it('should', () => {
       result.fount.containers().sort()
-        .should.eql([ 'default', 'myTest', 'myTest.pluginOne', 'myTest.pluginTwo' ])
+        .should.eql(['myTest', 'myTest.pluginOne', 'myTest.pluginTwo'])
     })
 
     it('should resolve requests for plugin with expected promise', function () {
@@ -176,7 +169,7 @@ describe('Loader', function () {
         .should.eventually.eql({
           _path: path.resolve('./spec/plugins/one.js'),
           title: 'plugin one',
-          list: [ 'two', 'three' ],
+          list: ['two', 'three'],
           value: {
             _path: path.resolve('./spec/things/one.js'),
             name: 'thingOne',
@@ -198,7 +191,7 @@ describe('Loader', function () {
       const loader = modlo()
       return loader.load({
         fount: fount,
-        patterns: [ './spec/simple/*.js' ]
+        patterns: ['./spec/simple/*.js']
       }).then(x => { result = x })
     })
 
