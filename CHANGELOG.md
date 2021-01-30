@@ -1,6 +1,13 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [1.2.2](https://github.com/arobson/modlo/compare/v1.2.1...v1.2.2) (2021-01-30)
+
+
+### Bug Fixes
+
+* cleanup dependencies and eliminate audit flags ([a71385c](https://github.com/arobson/modlo/commit/a71385c7878dbeaac2c21277864faeb557ed6fdd))
 
 <a name="1.2.1"></a>
 # [1.2.1](https://github.com/arobson/modlo/compare/v1.1.4...v1.2.1) (2017-07-16)

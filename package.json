@@ -1,6 +1,6 @@
 {
   "name": "modlo",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A dynamic module loader built on fount",
   "main": "src/index.js",
   "scripts": {
