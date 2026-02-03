@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/arobson/modlo/compare/v1.2.2...v2.1.0) (2026-02-03)
+
+
+### Features
+
+* typescript ESM release using new fount ([c48ad44](https://github.com/arobson/modlo/commit/c48ad4482bf6536d949e1e43eabe60ea9c7f89aa))
+
 ## [2.0.0](https://github.com/arobson/modlo/compare/v1.2.2...v2.0.0) (2026-02-01)
 
 ### ⚠ BREAKING CHANGES

@@ -1,6 +1,6 @@
 {
   "name": "modlo",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A dynamic module loader built on fount",
   "type": "module",
   "main": "./dist/index.js",
@@ -54,6 +54,7 @@
     "eslint": "^9.18.0",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
+    "standard-version": "^9.5.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.2"
   }
