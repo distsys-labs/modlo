@@ -11,3 +11,4 @@ plato/
 /Vagrantfile
 tmp/
 .nyc_output
+dist/

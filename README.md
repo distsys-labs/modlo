@@ -4,6 +4,9 @@ A dynamic module loader that uses fount for dynamic load and initialization of m
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 
+> **Version 2.0+** is a pure ESM package written in TypeScript. Requires Node.js >=18.
+> For CommonJS support, use version 1.x.
+
 > Precautions and disclaimers: modlo is experimental, use only as directed, call your doctor or pharmacist if you experience any of the following: 
 > * heightened delusions of grandeur
 > * spontaneous dental hydroplosion
@@ -26,8 +29,8 @@ Make sure to consider how modlo names. It's going to load a bunch of modules for
    * lastly, fall back on using the same file name approach
 
 __Recommended__
-```js
-module.exports = function superAwesomeThing () {
+```typescript
+export default function superAwesomeThing() {
 	// because the function is named, it will be registered in fount
 	// as `superAwesomeThing`.
 }
@@ -36,18 +39,18 @@ module.exports = function superAwesomeThing () {
 ### Namespaces
 Have several modules that take different configurations but all use the same argument name? Fount already has the concept of named containers. You can register these kinds of values namespaced to the module that will need them:
 
-```js
+```typescript
 // what if you have several modules that will all get loaded that use the
 // same argument name but expect different values specific to them?
 
-// myModule.js
-module.exports = function myModule (config) {
-	
+// myModule.ts
+export default function myModule(config) {
+
 }
 
-// myOtherModule.js
-module.exports = function myOtherModule (config) {
-	
+// myOtherModule.ts
+export default function myOtherModule(config) {
+
 }
 
 // when modlo is looking at each module's arguments
@@ -64,8 +67,8 @@ fount('myModule').register('config', {})
 // fount will treat the first part as the namespace and the second
 // part as the key:
 
-// myModule_config.js
-module.exports = function myModule_config() {
+// myModule_config.ts
+export default function myModule_config() {
 	return {}
 }
 ```
@@ -83,13 +86,15 @@ I also hate boilerplate code. Any time I think there's a chance to reduce the to
 ### `( [defaults] )`
 Requiring modlo returns an initializer that allows you to provide defaults that will be used when calling load later. The primary use for this is providing an external fount instance so it only needs to be done once:
 
-```js
+```typescript
+import modlo from 'modlo'
+import { fount } from 'fount'
+
 // no defaults - modlo will use an internal fount instance
 const loader = modlo()
 
 // providing your fount instance
-const fount = require('fount')
-const loader = modlo({ fount: fount })
+const loader = modlo({ fount })
 ```
 
 ### `load(config)`
@@ -112,51 +117,56 @@ __result hash format__
 ```
 
 #### example - no defaults during init
-```js
+```typescript
+import modlo from 'modlo'
+
 // no defaults - modlo will use an internal fount instance
 const loader = modlo()
 
-// load all `.plugin.js` files from the plugin folder
-loader.load({
-	patterns: './plugin/*.plugin.js'
-}).then(result => {
-	// this is why its unlikely you'd want to use
-	// modlo's fount instance, you have to capture and
-	// pass it on then keep passing it around
-	doSomethingWithFount(result.fount)
+// load all `.plugin.ts` files from the plugin folder
+const result = await loader.load({
+	patterns: './plugin/*.plugin.ts'
 })
+
+// this is why its unlikely you'd want to use
+// modlo's fount instance, you have to capture and
+// pass it on then keep passing it around
+doSomethingWithFount(result.fount)
 ```
 
 #### example - providing your fount instance during init
-```js
-const fount = require('fount')
-const loader = modlo({ fount: fount })
+```typescript
+import { fount } from 'fount'
+import modlo from 'modlo'
 
-// load all `.plugin.js` files from the plugin folder
-// load all `resource.js` files from a folder structure under `./resources`
-loader.load({
-	patterns: [ './plugin/*.plugin.js', './resources/**/resource.js' ]
-}).then(result => {
-	// now it's less critical that you capture anything at this stage,
-	// it's really more just about waiting for the promise to resolve
-	// before completing your service's initialization
+const loader = modlo({ fount })
+
+// load all `.plugin.ts` files from the plugin folder
+// load all `resource.ts` files from a folder structure under `./resources`
+await loader.load({
+	patterns: [ './plugin/*.plugin.ts', './resources/**/resource.ts' ]
 })
+
+// now it's less critical that you capture anything at this stage,
+// it's really more just about waiting for the promise to resolve
+// before completing your service's initialization
 ```
 
 #### example - providing a fount instance at load time
-``` js
-const fount = require('fount')
+```typescript
+import { fount } from 'fount'
+import modlo from 'modlo'
+
 const loader = modlo()
 
 // you can wait to provide your fount instance when calling load
-// load all `.plugin.js` files from the plugin folder
-// load all `resource.js` files from a folder structure under `./resources`
-// load and register `when` and `postal` from the npm modules folder
-loader.load({
-	fount: fount,
-	patterns: [ './plugin/*.plugin.js', './resources/**/resource.js' ],
-	modules: [ "when", "postal" ]
-}).then(result => {
+// load all `.plugin.ts` files from the plugin folder
+// load all `resource.ts` files from a folder structure under `./resources`
+// load and register npm modules
+await loader.load({
+	fount,
+	patterns: [ './plugin/*.plugin.ts', './resources/**/resource.ts' ],
+	modules: [ 'debug', 'fast-glob' ]
 })
 ```
 

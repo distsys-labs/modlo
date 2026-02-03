@@ -1,4 +1,4 @@
-module.exports = function pluginOne (thingOne, two, three, config) {
+export default function pluginOne (thingOne: any, two: any, three: any, config: any) {
   return Promise.resolve({
     title: config.title,
     value: thingOne,

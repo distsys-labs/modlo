@@ -1,5 +1,5 @@
 /* eslint-disable */
-module.exports = function pluginOne_config () {
+export default function pluginOne_config () {
   return Promise.resolve({
     title: 'plugin one'
   })

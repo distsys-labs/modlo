@@ -1,4 +1,4 @@
-module.exports = function pluginTwo (config) {
+export default function pluginTwo (config: any) {
   return Promise.resolve({
     title: config.title
   })
